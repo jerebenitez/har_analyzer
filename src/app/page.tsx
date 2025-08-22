@@ -10,6 +10,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ApiAnalyzer } from "@/features/api-analysis/analyzer";
 import { CookieTracker } from "@/features/cookies/tracker";
+import { ExportTools } from "@/features/export/export";
 import { RequestFlowAnalyzer } from "@/features/flow/analyzer";
 import { RequestViewer } from "@/features/requests/requests";
 import { HarUploader } from "@/features/upload/har-uploader";
@@ -134,7 +135,9 @@ export default function Home() {
         <TabsContent value="analysis">
             {HARData && <ApiAnalyzer entries={HARData.log.entries} />}
         </TabsContent>
-        <TabsContent value="export">Export</TabsContent>
+        <TabsContent value="export">
+            {HARData && <ExportTools entries={HARData.log.entries} />}
+        </TabsContent>
       </Tabs>
     </main>
   );
