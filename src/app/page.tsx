@@ -1,4 +1,15 @@
+"use client"
+
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { HarUploader } from "@/features/upload/har-uploader";
+import { HARData } from "@/lib/types";
 import {
   Code,
   Cookie,
@@ -7,12 +18,20 @@ import {
   GitBranch,
   Upload,
 } from "lucide-react";
+import { useState } from "react";
 
 export default function Home() {
-  const harData = true;
+    const [HARData, setHARData] = useState<HARData | null>(null)
+    const [activeTab, setActiveTab] = useState("upload")
+    
+    const handleHARUpload = (data: HARData) => {
+        setHARData(data)
+        setActiveTab("requests")
+    }
+
   return (
     <main className="container mx-auto px-4 py-8">
-      <Tabs className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="upload" className="flex items-center gap-2">
             <Upload className="h-4 w-4" />
@@ -20,7 +39,7 @@ export default function Home() {
           </TabsTrigger>
           <TabsTrigger
             value="requests"
-            disabled={!harData}
+            disabled={!HARData}
             className="flex items-center gap-2"
           >
             <FileText className="h-4 w-4" />
@@ -28,7 +47,7 @@ export default function Home() {
           </TabsTrigger>
           <TabsTrigger
             value="flow"
-            disabled={!harData}
+            disabled={!HARData}
             className="flex items-center gap-2"
           >
             <GitBranch className="h-4 w-4" />
@@ -36,7 +55,7 @@ export default function Home() {
           </TabsTrigger>
           <TabsTrigger
             value="cookies"
-            disabled={!harData}
+            disabled={!HARData}
             className="flex items-center gap-2"
           >
             <Cookie className="h-4 w-4" />
@@ -44,7 +63,7 @@ export default function Home() {
           </TabsTrigger>
           <TabsTrigger
             value="analysis"
-            disabled={!harData}
+            disabled={!HARData}
             className="flex items-center gap-2"
           >
             <Code className="h-4 w-4" />
@@ -52,7 +71,7 @@ export default function Home() {
           </TabsTrigger>
           <TabsTrigger
             value="export"
-            disabled={!harData}
+            disabled={!HARData}
             className="flex items-center gap-2"
           >
             <Download className="h-4 w-4" />
@@ -60,23 +79,26 @@ export default function Home() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="upload">
-            Upload
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-[family-name:var(--font-space-grotesk)]">
+                Upload HAR File
+              </CardTitle>
+              <CardDescription>
+                Upload a HAR (HTTP Archive) file to analyze HTTP requests,
+                responses, and cookies
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <HarUploader onUpload={handleHARUpload} />
+            </CardContent>
+          </Card>
         </TabsContent>
-        <TabsContent value="requests">
-            Requests
-        </TabsContent>
-        <TabsContent value="flow">
-            Flow
-        </TabsContent>
-        <TabsContent value="cookies">
-            Cookies
-        </TabsContent>
-        <TabsContent value="analysis">
-            Analysis
-        </TabsContent>
-        <TabsContent value="export">
-            Export
-        </TabsContent>
+        <TabsContent value="requests">Requests</TabsContent>
+        <TabsContent value="flow">Flow</TabsContent>
+        <TabsContent value="cookies">Cookies</TabsContent>
+        <TabsContent value="analysis">Analysis</TabsContent>
+        <TabsContent value="export">Export</TabsContent>
       </Tabs>
     </main>
   );
