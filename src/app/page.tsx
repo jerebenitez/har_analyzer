@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Card,
@@ -8,6 +8,8 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RequestFlowAnalyzer } from "@/features/flow/analyzer";
+import { RequestViewer } from "@/features/requests/requests";
 import { HarUploader } from "@/features/upload/har-uploader";
 import { HARData } from "@/lib/types";
 import {
@@ -21,17 +23,27 @@ import {
 import { useState } from "react";
 
 export default function Home() {
-    const [HARData, setHARData] = useState<HARData | null>(null)
-    const [activeTab, setActiveTab] = useState("upload")
-    
-    const handleHARUpload = (data: HARData) => {
-        setHARData(data)
-        setActiveTab("requests")
-    }
+  const [HARData, setHARData] = useState<HARData | null>(null);
+  const [activeTab, setActiveTab] = useState("upload");
+  const [selectedRequestIndex, setSelectedRequestIndex] = useState<number | undefined>(undefined)
+
+  const handleHARUpload = (data: HARData) => {
+    setHARData(data);
+    setActiveTab("requests");
+  };
+
+  const handleRequestSelect = (index: number) => {
+    setSelectedRequestIndex(index)
+    setActiveTab("flow")
+  }
 
   return (
     <main className="container mx-auto px-4 py-8">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="upload" className="flex items-center gap-2">
             <Upload className="h-4 w-4" />
@@ -94,8 +106,24 @@ export default function Home() {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="requests">Requests</TabsContent>
-        <TabsContent value="flow">Flow</TabsContent>
+        <TabsContent value="requests">
+          {HARData && (
+            <RequestViewer
+              entries={HARData.log.entries}
+              selectedRequestIndex={selectedRequestIndex}
+              onRequestSelect={handleRequestSelect}
+            />
+          )}
+        </TabsContent>
+        <TabsContent value="flow">
+        {HARData && (
+            <RequestFlowAnalyzer
+                entries={HARData.log.entries}
+                selectedRequestIndex={selectedRequestIndex}
+                onRequestSelect={handleRequestSelect}
+            />
+        )}
+        </TabsContent>
         <TabsContent value="cookies">Cookies</TabsContent>
         <TabsContent value="analysis">Analysis</TabsContent>
         <TabsContent value="export">Export</TabsContent>
