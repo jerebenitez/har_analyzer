@@ -8,6 +8,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CookieTracker } from "@/features/cookies/tracker";
 import { RequestFlowAnalyzer } from "@/features/flow/analyzer";
 import { RequestViewer } from "@/features/requests/requests";
 import { HarUploader } from "@/features/upload/har-uploader";
@@ -25,7 +26,9 @@ import { useState } from "react";
 export default function Home() {
   const [HARData, setHARData] = useState<HARData | null>(null);
   const [activeTab, setActiveTab] = useState("upload");
-  const [selectedRequestIndex, setSelectedRequestIndex] = useState<number | undefined>(undefined)
+  const [selectedRequestIndex, setSelectedRequestIndex] = useState<
+    number | undefined
+  >(undefined);
 
   const handleHARUpload = (data: HARData) => {
     setHARData(data);
@@ -33,9 +36,9 @@ export default function Home() {
   };
 
   const handleRequestSelect = (index: number) => {
-    setSelectedRequestIndex(index)
-    setActiveTab("flow")
-  }
+    setSelectedRequestIndex(index);
+    setActiveTab("flow");
+  };
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -116,15 +119,17 @@ export default function Home() {
           )}
         </TabsContent>
         <TabsContent value="flow">
-        {HARData && (
+          {HARData && (
             <RequestFlowAnalyzer
-                entries={HARData.log.entries}
-                selectedRequestIndex={selectedRequestIndex}
-                onRequestSelect={handleRequestSelect}
+              entries={HARData.log.entries}
+              selectedRequestIndex={selectedRequestIndex}
+              onRequestSelect={handleRequestSelect}
             />
-        )}
+          )}
         </TabsContent>
-        <TabsContent value="cookies">Cookies</TabsContent>
+        <TabsContent value="cookies">
+          {HARData && <CookieTracker entries={HARData.log.entries} />}
+        </TabsContent>
         <TabsContent value="analysis">Analysis</TabsContent>
         <TabsContent value="export">Export</TabsContent>
       </Tabs>
