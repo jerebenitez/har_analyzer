@@ -8,6 +8,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ApiAnalyzer } from "@/features/api-analysis/analyzer";
 import { CookieTracker } from "@/features/cookies/tracker";
 import { RequestFlowAnalyzer } from "@/features/flow/analyzer";
 import { RequestViewer } from "@/features/requests/requests";
@@ -130,7 +131,9 @@ export default function Home() {
         <TabsContent value="cookies">
           {HARData && <CookieTracker entries={HARData.log.entries} />}
         </TabsContent>
-        <TabsContent value="analysis">Analysis</TabsContent>
+        <TabsContent value="analysis">
+            {HARData && <ApiAnalyzer entries={HARData.log.entries} />}
+        </TabsContent>
         <TabsContent value="export">Export</TabsContent>
       </Tabs>
     </main>
