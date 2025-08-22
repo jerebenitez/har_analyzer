@@ -423,7 +423,6 @@ export function RequestFlowAnalyzer({ entries, selectedRequestIndex, onRequestSe
           </CardHeader>
           {expandedSections.has("parameters") && (
             <CardContent>
-              <ScrollArea className="h-48">
                 <div className="space-y-3">
                   {analysisData.parameterSources.map((param, i) => (
                     <div key={i} className="flex items-center justify-between p-3 border rounded-lg">
@@ -447,7 +446,6 @@ export function RequestFlowAnalyzer({ entries, selectedRequestIndex, onRequestSe
                     </div>
                   ))}
                 </div>
-              </ScrollArea>
             </CardContent>
           )}
         </Card>
@@ -466,7 +464,6 @@ export function RequestFlowAnalyzer({ entries, selectedRequestIndex, onRequestSe
           </CardHeader>
           {expandedSections.has("cookies") && (
             <CardContent>
-              <ScrollArea className="h-48">
                 <div className="space-y-3">
                   {analysisData.cookieSources.map((cookie, i) => (
                     <div key={i} className="flex items-center justify-between p-3 border rounded-lg">
@@ -490,7 +487,6 @@ export function RequestFlowAnalyzer({ entries, selectedRequestIndex, onRequestSe
                     </div>
                   ))}
                 </div>
-              </ScrollArea>
             </CardContent>
           )}
         </Card>
