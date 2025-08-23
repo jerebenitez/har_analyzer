@@ -26,7 +26,13 @@ export const getMethodColor = (method: string) => {
   }
 };
 
-export const formatUrl = (url: string) => {
+export type UrlInfo = {
+    domain: string,
+    path: string,
+    full: string
+}
+
+export const formatUrl = (url: string): UrlInfo => {
   try {
     const urlObj = new URL(url);
     return {

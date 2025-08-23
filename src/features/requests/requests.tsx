@@ -31,7 +31,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatJson, formatSize, formatTime, formatUrl, getMethodColor, getStatusColor } from "./utils";
+import {
+  formatJson,
+  formatSize,
+  formatTime,
+  formatUrl,
+  getMethodColor,
+  getStatusColor,
+  UrlInfo,
+} from "./utils";
 
 interface HarEntry {
   request: {
@@ -197,54 +205,13 @@ export function RequestViewer({
                       }
                     }}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          {isExpanded ? (
-                            <ChevronDown className="h-4 w-4" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4" />
-                          )}
-                          <Badge
-                            className={`${getMethodColor(entry.request.method)} border`}
-                          >
-                            #{originalIndex + 1} {entry.request.method}
-                          </Badge>
-                          <Badge
-                            className={`${getStatusColor(entry.response.status)} border`}
-                          >
-                            {entry.response.status}
-                          </Badge>
-                          {isSelected && (
-                            <Badge
-                              variant="outline"
-                              className="text-xs bg-primary/10 text-primary border-primary/20"
-                            >
-                              Flow Analysis
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 text-sm max-w-full">
-                            <Globe className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-                            <span className="truncate font-mono text-muted-foreground">
-                              {urlInfo.domain}
-                            </span>
-                            <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-                            <span className="truncate font-mono text-xs">
-                              {urlInfo.path}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {formatTime(entry.time)}
-                        </div>
-                        <div>{formatSize(entry.response.content.size)}</div>
-                      </div>
-                    </div>
+                    <RequestTrigger
+                        isExpanded={isExpanded}
+                        isSelected={isSelected}
+                        entry={entry}
+                        urlInfo={urlInfo}
+                        index={originalIndex}
+                    />
                   </CardHeader>
                 </CollapsibleTrigger>
 
@@ -268,6 +235,65 @@ export function RequestViewer({
           </CardContent>
         </Card>
       )}
+    </div>
+  );
+}
+
+function RequestTrigger({
+  isExpanded,
+  isSelected,
+  entry,
+  index,
+  urlInfo,
+}: {
+  isExpanded: boolean;
+  isSelected: boolean;
+  entry: HarEntry;
+  index: number;
+  urlInfo: UrlInfo;
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          {isExpanded ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )}
+          <Badge className={`${getMethodColor(entry.request.method)} border`}>
+            #{index + 1} {entry.request.method}
+          </Badge>
+          <Badge className={`${getStatusColor(entry.response.status)} border`}>
+            {entry.response.status}
+          </Badge>
+          {isSelected && (
+            <Badge
+              variant="outline"
+              className="text-xs bg-primary/10 text-primary border-primary/20"
+            >
+              Flow Analysis
+            </Badge>
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 text-sm max-w-full">
+            <Globe className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+            <span className="truncate font-mono text-muted-foreground">
+              {urlInfo.domain}
+            </span>
+            <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+            <span className="truncate font-mono text-xs">{urlInfo.path}</span>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-1">
+          <Clock className="h-3 w-3" />
+          {formatTime(entry.time)}
+        </div>
+        <div>{formatSize(entry.response.content.size)}</div>
+      </div>
     </div>
   );
 }
