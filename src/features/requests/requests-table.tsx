@@ -9,6 +9,8 @@ import {
   getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
@@ -35,8 +37,9 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   // Extract unique methods and status codes for filters
   const { methods, statusCodes } = useMemo(() => {
@@ -49,8 +52,12 @@ export function DataTable<TData, TValue>({
     });
 
     return {
-      methods: Array.from(methodSet).sort().map(m => ({ label: m, value: m })),
-      statusCodes: Array.from(statusSet).sort((a, b) => parseInt(a) - parseInt(b)).map(sc => ({ label: sc, value: sc })),
+      methods: Array.from(methodSet)
+        .sort()
+        .map((m) => ({ label: m, value: m })),
+      statusCodes: Array.from(statusSet)
+        .sort((a, b) => parseInt(a) - parseInt(b))
+        .map((sc) => ({ label: sc, value: sc })),
     };
   }, [data]);
 
@@ -60,21 +67,28 @@ export function DataTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onColumnFiltersChange: setColumnFilters,
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     state: {
+      sorting,
       rowSelection,
       columnVisibility,
-      columnFilters
+      columnFilters,
     },
   });
 
   return (
     <div className="space-y-6">
-    <DataTableToolbar table={table} methods={methods} statuses={statusCodes} />
+      <DataTableToolbar
+        table={table}
+        methods={methods}
+        statuses={statusCodes}
+      />
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>

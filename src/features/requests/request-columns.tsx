@@ -1,39 +1,19 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { formatSize, formatTime, formatUrl, getMethodColor, getStatusColor, UrlInfo } from "./utils";
+import { formatSize, formatTime, formatUrl, getMethodColor, getStatusColor } from "./utils";
 import { Badge } from "@/components/ui/badge";
 import { HarEntry } from "./requests";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowRight, Clock, Globe } from "lucide-react";
+import { DataTableColumnHeader } from "./requests-column-header";
 
 export const columns: ColumnDef<HarEntry>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     id: "datestamp",
     accessorKey: "startedDateTime",
-    header: "Started At",
+    header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Started at" />
+    ),
     cell: ({ row }) => {
         const date = new Date(row.getValue("datestamp"))
         return <span className="text-muted-foreground">{date.toLocaleDateString()}{' '}{date.toLocaleTimeString()}{'.'}{date.getMilliseconds()}</span>
@@ -42,7 +22,9 @@ export const columns: ColumnDef<HarEntry>[] = [
   {
     id: "method",
     accessorKey: "request.method",
-    header: "Method",
+    header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Method" />
+    ),
     cell: ({ row }) => (
       <Badge className={getMethodColor(row.getValue("method"))}>
         {row.getValue("method")}
@@ -52,7 +34,9 @@ export const columns: ColumnDef<HarEntry>[] = [
   {
     id: "status",
     accessorKey: "response.status",
-    header: "Status Code",
+    header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status Code" />
+    ),
     cell: ({ row }) => (
       <Badge className={getStatusColor(row.getValue("status"))}>
         {row.getValue("status")}
@@ -81,7 +65,9 @@ export const columns: ColumnDef<HarEntry>[] = [
   {
     id: "time",
     accessorKey: "time",
-    header: "Time",
+    header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Time" />
+    ),
     cell: ({ row }) => (
         <div className="flex items-center gap-2 text-muted-foreground">
           <Clock className="h-3 w-3" />
@@ -92,7 +78,9 @@ export const columns: ColumnDef<HarEntry>[] = [
   {
     id: "size",
     accessorKey: "response.content.size",
-    header: "Size",
+    header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Size" />
+    ),
     cell: ({ row }) => <span className="text-muted-foreground text-xs">{formatSize(row.getValue("size"))}</span>
   }
 ];
