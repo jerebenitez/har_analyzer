@@ -55,7 +55,7 @@ export const formatTime = (time: number) => {
 };
 
 export const formatSize = (size: number) => {
-  if (Number.isNaN(size) || size === undefined) return "-1 B";
+  if (Number.isNaN(size) || size === undefined) return "N/A";
   if (size < 1024) return `${size} B`;
   if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;
