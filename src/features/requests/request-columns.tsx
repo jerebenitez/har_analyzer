@@ -31,6 +31,15 @@ export const columns: ColumnDef<HarEntry>[] = [
     enableHiding: false,
   },
   {
+    id: "datestamp",
+    accessorKey: "startedDateTime",
+    header: "Started At",
+    cell: ({ row }) => {
+        const date = new Date(row.getValue("datestamp"))
+        return <span className="text-muted-foreground">{date.toLocaleDateString()}{' '}{date.toLocaleTimeString()}{'.'}{date.getMilliseconds()}</span>
+    }
+  },
+  {
     id: "method",
     accessorKey: "request.method",
     header: "Method",
