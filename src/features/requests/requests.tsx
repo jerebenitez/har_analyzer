@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatJson, formatSize, formatTime, formatUrl, getMethodColor, getStatusColor } from "./utils";
 
 interface HarEntry {
   request: {
@@ -107,63 +108,6 @@ export function RequestViewer({
       return matchesSearch && matchesMethod && matchesStatus;
     });
   }, [entries, searchTerm, methodFilter, statusFilter]);
-
-  const getStatusColor = (status: number) => {
-    if (status >= 200 && status < 300)
-      return "bg-green-100 text-green-800 border-green-200";
-    if (status >= 300 && status < 400)
-      return "bg-blue-100 text-blue-800 border-blue-200";
-    if (status >= 400 && status < 500)
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    if (status >= 500) return "bg-red-100 text-red-800 border-red-200";
-    return "bg-gray-100 text-gray-800 border-gray-200";
-  };
-
-  const getMethodColor = (method: string) => {
-    switch (method.toUpperCase()) {
-      case "GET":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "POST":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "PUT":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "DELETE":
-        return "bg-red-100 text-red-800 border-red-200";
-      case "PATCH":
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const formatUrl = (url: string) => {
-    try {
-      const urlObj = new URL(url);
-      return {
-        domain: urlObj.hostname,
-        path: urlObj.pathname + urlObj.search,
-        full: url,
-      };
-    } catch {
-      return {
-        domain: "",
-        path: url,
-        full: url,
-      };
-    }
-  };
-
-  const formatTime = (time: number) => {
-    if (time < 1000) return `${Math.round(time)} ms`;
-    return `${(time / 1000).toFixed(2)} s`;
-  };
-
-  const formatSize = (size: number) => {
-    if (Number.isNaN(size) || size === undefined) return "-1 B";
-    if (size < 1024) return `${size} B`;
-    if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
-    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-  };
 
   return (
     <div className="space-y-6">
@@ -343,14 +287,6 @@ function RequestDetails({ entry }: { entry: HarEntry }) {
         </div>
       </div>
     ));
-  };
-
-  const formatJson = (text: string) => {
-    try {
-      return JSON.stringify(JSON.parse(text), null, 2);
-    } catch {
-      return text;
-    }
   };
 
   return (
