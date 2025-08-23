@@ -2,8 +2,12 @@
 
 import {
   ColumnDef,
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
   VisibilityState,
@@ -17,9 +21,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { DataTablePagination } from "./requests-pagination";
-import { DataTableViewOptions } from "./requests-column-visibility";
+import { DataTableToolbar } from "./requests-toolbar";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -32,23 +36,45 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+
+  // Extract unique methods and status codes for filters
+  const { methods, statusCodes } = useMemo(() => {
+    const methodSet = new Set<string>();
+    const statusSet = new Set<string>();
+
+    data.forEach((entry) => {
+      methodSet.add(entry.request.method);
+      statusSet.add(entry.response.status.toString());
+    });
+
+    return {
+      methods: Array.from(methodSet).sort().map(m => ({ label: m, value: m })),
+      statusCodes: Array.from(statusSet).sort((a, b) => parseInt(a) - parseInt(b)).map(sc => ({ label: sc, value: sc })),
+    };
+  }, [data]);
 
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onColumnFiltersChange: setColumnFilters,
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
     state: {
       rowSelection,
-      columnVisibility
+      columnVisibility,
+      columnFilters
     },
   });
 
   return (
     <div className="space-y-6">
-    <DataTableViewOptions table={table} />
+    <DataTableToolbar table={table} methods={methods} statuses={statusCodes} />
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
