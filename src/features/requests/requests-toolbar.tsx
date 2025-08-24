@@ -1,28 +1,27 @@
-"use client"
+"use client";
 
-import { Input } from "@/components/ui/input"
-import { Table } from "@tanstack/react-table"
-import { X } from "lucide-react"
-import { DataTableFacetedFilter } from "./requests-faceted-filter"
-import { Button } from "@/components/ui/button"
-import { DataTableViewOptions } from "./requests-column-visibility"
-
+import { Input } from "@/components/ui/input";
+import { Table } from "@tanstack/react-table";
+import { X } from "lucide-react";
+import { DataTableFacetedFilter } from "./requests-faceted-filter";
+import { Button } from "@/components/ui/button";
+import { DataTableViewOptions } from "./requests-column-visibility";
 
 interface DataTableToolbarProps<TData> {
-  table: Table<TData>
+  table: Table<TData>;
 }
 
 type Options = {
-    label: string,
-    value: string
-}
+  label: string;
+  value: string;
+};
 
 export function DataTableToolbar<TData>({
   table,
   methods,
-  statuses
-}: DataTableToolbarProps<TData> & { methods: Options[], statuses: Options[] }) {
-  const isFiltered = table.getState().columnFilters.length > 0
+  statuses,
+}: DataTableToolbarProps<TData> & { methods: Options[]; statuses: Options[] }) {
+  const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
     <div className="flex items-center justify-between">
@@ -49,6 +48,23 @@ export function DataTableToolbar<TData>({
             options={statuses}
           />
         )}
+        {table.getColumn("type") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("type")}
+            title="Type"
+            options={[
+              "HTML",
+              "CSS",
+              "JS",
+              "XHR",
+              "Fonts",
+              "Images",
+              "Media",
+              "WS",
+              "Other",
+            ].map((t) => ({ label: t, value: t.toLowerCase() }))}
+          />
+        )}
         {isFiltered && (
           <Button
             variant="ghost"
@@ -62,5 +78,5 @@ export function DataTableToolbar<TData>({
       </div>
       <DataTableViewOptions table={table} />
     </div>
-  )
+  );
 }

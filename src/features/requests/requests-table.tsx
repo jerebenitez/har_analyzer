@@ -26,6 +26,7 @@ import {
 import { useMemo, useState } from "react";
 import { DataTablePagination } from "./requests-pagination";
 import { DataTableToolbar } from "./requests-toolbar";
+import { categorizeMimeType } from "./utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

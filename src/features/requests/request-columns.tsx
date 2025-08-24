@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { formatSize, formatTime, formatUrl, getMethodColor, getStatusColor } from "./utils";
+import { categorizeMimeType, filterByNetKind, formatSize, formatTime, formatUrl, getMethodColor, getStatusColor } from "./utils";
 import { Badge } from "@/components/ui/badge";
 import { HarEntry } from "./requests";
 import { ArrowRight, Clock, Globe } from "lucide-react";
@@ -35,7 +35,7 @@ export const columns: ColumnDef<HarEntry>[] = [
     id: "status",
     accessorKey: "response.status",
     filterFn: (row, columnId, filterValue) => {
-        return row.getValue(columnId) === parseInt(filterValue)
+        return filterValue.map((v: string) => parseInt(v)).includes(row.getValue(columnId))
     },
     header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status Code" />
@@ -64,6 +64,22 @@ export const columns: ColumnDef<HarEntry>[] = [
         </div>
       );
     },
+  },
+  {
+    id: "type",
+    accessorKey: "response.content.mimeType",
+    filterFn: (row, columnId, filterValue) => {
+        const kind = categorizeMimeType(row.getValue(columnId))
+
+        if (!filterValue || filterValue.length === 0)
+            return true
+
+        return filterValue.includes(kind)
+    },
+    header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Type" />
+    ),
+    cell: ({ row }) => <span className="text-muted-foreground text-sm">{row.getValue("type")}</span>
   },
   {
     id: "time",
