@@ -34,6 +34,9 @@ export const columns: ColumnDef<HarEntry>[] = [
   {
     id: "status",
     accessorKey: "response.status",
+    filterFn: (row, columnId, filterValue) => {
+        return row.getValue(columnId) === parseInt(filterValue)
+    },
     header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status Code" />
     ),
