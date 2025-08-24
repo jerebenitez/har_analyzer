@@ -51,7 +51,7 @@ export const columns: ColumnDef<HarEntry>[] = [
       const urlInfo = formatUrl(row.getValue("urlInfo"));
 
       return (
-        <div className="flex items-center gap-2 text-sm max-w-96">
+        <div className="flex items-center gap-2 text-sm max-w-[700px]">
           <Globe className="h-3 w-3 text-muted-foreground flex-shrink-0" />
           <span className="truncate font-mono text-muted-foreground">
             {urlInfo.domain}
