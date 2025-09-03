@@ -1,30 +1,48 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { categorizeMimeType, filterByNetKind, formatSize, formatTime, formatUrl, getMethodColor, getStatusColor } from "./utils";
+import {
+  categorizeMimeType,
+  filterByNetKind,
+  formatSize,
+  formatTime,
+  formatUrl,
+  getMethodColor,
+  getStatusColor,
+} from "./utils";
 import { Badge } from "@/components/ui/badge";
 import { HarEntry } from "./requests";
 import { ArrowRight, Clock, Globe } from "lucide-react";
 import { DataTableColumnHeader } from "./requests-column-header";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const columns: ColumnDef<HarEntry>[] = [
   {
     id: "datestamp",
     accessorKey: "startedDateTime",
     header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Started at" />
+      <DataTableColumnHeader column={column} title="Started at" />
     ),
     cell: ({ row }) => {
-        const date = new Date(row.getValue("datestamp"))
-        return <span className="text-muted-foreground">{date.toLocaleDateString()}{' '}{date.toLocaleTimeString()}{'.'}{date.getMilliseconds()}</span>
-    }
+      const date = new Date(row.getValue("datestamp"));
+      return (
+        <span className="text-muted-foreground">
+          {date.toLocaleDateString()} {date.toLocaleTimeString()}
+          {"."}
+          {date.getMilliseconds()}
+        </span>
+      );
+    },
   },
   {
     id: "method",
     accessorKey: "request.method",
     header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Method" />
+      <DataTableColumnHeader column={column} title="Method" />
     ),
     cell: ({ row }) => (
       <Badge className={getMethodColor(row.getValue("method"))}>
@@ -36,10 +54,12 @@ export const columns: ColumnDef<HarEntry>[] = [
     id: "status",
     accessorKey: "response.status",
     filterFn: (row, columnId, filterValue) => {
-        return filterValue.map((v: string) => parseInt(v)).includes(row.getValue(columnId))
+      return filterValue
+        .map((v: string) => parseInt(v))
+        .includes(row.getValue(columnId));
     },
     header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status Code" />
+      <DataTableColumnHeader column={column} title="Status Code" />
     ),
     cell: ({ row }) => (
       <Badge className={getStatusColor(row.getValue("status"))}>
@@ -55,20 +75,20 @@ export const columns: ColumnDef<HarEntry>[] = [
       const urlInfo = formatUrl(row.getValue("urlInfo"));
 
       return (
-          <Tooltip>
+        <Tooltip>
           <TooltipTrigger>
-        <div className="flex items-center gap-2 text-sm max-w-[700px]">
-          <Globe className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-          <span className="truncate font-mono text-muted-foreground">
-            {urlInfo.domain}
-          </span>
-          <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-          <span className="truncate font-mono text-xs">{urlInfo.path}</span>
-        </div>
-        </TooltipTrigger>
-        <TooltipContent>
+            <div className="flex items-center gap-2 text-sm max-w-[700px]">
+              <Globe className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+              <span className="truncate font-mono text-muted-foreground">
+                {urlInfo.domain}
+              </span>
+              <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+              <span className="truncate font-mono text-xs">{urlInfo.path}</span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
             <p>{row.getValue("urlInfo")}</p>
-        </TooltipContent>
+          </TooltipContent>
         </Tooltip>
       );
     },
@@ -77,37 +97,44 @@ export const columns: ColumnDef<HarEntry>[] = [
     id: "type",
     accessorKey: "response.content.mimeType",
     filterFn: (row, columnId, filterValue) => {
-        const kind = categorizeMimeType(row.getValue(columnId))
+      const kind = categorizeMimeType(row.getValue(columnId));
 
-        if (!filterValue || filterValue.length === 0)
-            return true
+      if (!filterValue || filterValue.length === 0) return true;
 
-        return filterValue.includes(kind)
+      return filterValue.includes(kind);
     },
     header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Type" />
+      <DataTableColumnHeader column={column} title="Type" />
     ),
-    cell: ({ row }) => <span className="text-muted-foreground text-sm">{row.getValue("type")}</span>
+    cell: ({ row }) => (
+      <span className="text-muted-foreground text-sm">
+        {row.getValue("type")}
+      </span>
+    ),
   },
   {
     id: "time",
     accessorKey: "time",
     header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Time" />
+      <DataTableColumnHeader column={column} title="Time" />
     ),
     cell: ({ row }) => (
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Clock className="h-3 w-3" />
-          {formatTime(row.getValue("time"))}
-        </div>
-    )
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Clock className="h-3 w-3" />
+        {formatTime(row.getValue("time"))}
+      </div>
+    ),
   },
   {
     id: "size",
     accessorKey: "response.content.size",
     header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Size" />
+      <DataTableColumnHeader column={column} title="Size" />
     ),
-    cell: ({ row }) => <span className="text-muted-foreground text-xs">{formatSize(row.getValue("size"))}</span>
-  }
+    cell: ({ row }) => (
+      <span className="text-muted-foreground text-xs">
+        {formatSize(row.getValue("size"))}
+      </span>
+    ),
+  },
 ];

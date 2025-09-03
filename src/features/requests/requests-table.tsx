@@ -26,7 +26,13 @@ import {
 import { useMemo, useState } from "react";
 import { DataTablePagination } from "./requests-pagination";
 import { DataTableToolbar } from "./requests-toolbar";
-import { categorizeMimeType } from "./utils";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@/components/ui/collapsible";
+import { RequestDetail } from "./request-detail";
+import { HarEntry } from "./requests";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -113,19 +119,34 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                    <Collapsible key={row.id} asChild>
+                    <>
+                    <CollapsibleTrigger asChild>
+                    <TableRow
+                      data-state={row.getIsSelected() && "selected"}
+                      className="cursor-pointer"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    </CollapsibleTrigger>
+                  <CollapsibleContent asChild>
+                    <TableRow>
+                        <TableCell colSpan={columns.length} className="p-0">
+                            <div className="bg-muted/20 p-4">
+                                <RequestDetail entry={row.original as HarEntry} />
+                            </div>
+                        </TableCell>
+                    </TableRow>
+                  </CollapsibleContent>
+                  </>
+                </Collapsible>
               ))
             ) : (
               <TableRow>
@@ -140,7 +161,9 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {table.getRowModel().rows?.length > 0 && <DataTablePagination table={table} />}
+      {table.getRowModel().rows?.length > 0 && (
+        <DataTablePagination table={table} />
+      )}
     </div>
   );
 }
