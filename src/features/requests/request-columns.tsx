@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { HarEntry } from "./requests";
 import { ArrowRight, Clock, Globe } from "lucide-react";
 import { DataTableColumnHeader } from "./requests-column-header";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const columns: ColumnDef<HarEntry>[] = [
   {
@@ -54,6 +55,8 @@ export const columns: ColumnDef<HarEntry>[] = [
       const urlInfo = formatUrl(row.getValue("urlInfo"));
 
       return (
+          <Tooltip>
+          <TooltipTrigger>
         <div className="flex items-center gap-2 text-sm max-w-[700px]">
           <Globe className="h-3 w-3 text-muted-foreground flex-shrink-0" />
           <span className="truncate font-mono text-muted-foreground">
@@ -62,6 +65,11 @@ export const columns: ColumnDef<HarEntry>[] = [
           <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />
           <span className="truncate font-mono text-xs">{urlInfo.path}</span>
         </div>
+        </TooltipTrigger>
+        <TooltipContent>
+            <p>{row.getValue("urlInfo")}</p>
+        </TooltipContent>
+        </Tooltip>
       );
     },
   },
